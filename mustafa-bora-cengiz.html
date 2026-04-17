@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mustafa Bora Cengiz — Artist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #1DB954;
+      --green-dim: #17a349;
+      --bg: #080808;
+      --surface: #111111;
+      --surface2: #181818;
+      --border: rgba(255,255,255,0.07);
+      --text: #f0f0f0;
+      --muted: #8a8a8a;
+      --white: #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--green);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease, opacity 0.2s;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1.5px solid rgba(29,185,84,0.5);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transition: transform 0.35s cubic-bezier(0.23,1,0.32,1), width 0.3s, height 0.3s, opacity 0.2s;
+      transform: translate(-50%, -50%);
+    }
+    body:hover .cursor { opacity: 1; }
+
+    /* ── GRAIN OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 180px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 48px;
+      background: linear-gradient(to bottom, rgba(8,8,8,0.95), transparent);
+      backdrop-filter: blur(4px);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-logo .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; }
+    .nav-pill {
+      background: rgba(29,185,84,0.12);
+      border: 1px solid rgba(29,185,84,0.3);
+      color: var(--green);
+      padding: 8px 20px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: flex-start; justify-content: flex-end;
+      padding: 0 48px 80px;
+      overflow: hidden;
+    }
+
+    /* Animated background mesh */
+    .hero-bg {
+      position: absolute; inset: 0;
+      z-index: 0;
+    }
+    .hero-bg::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 80% 30%, rgba(29,185,84,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 20% 80%, rgba(29,185,84,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 80% at 50% 50%, rgba(10,10,10,0) 0%, var(--bg) 80%);
+    }
+
+    /* Vinyl record */
+    .vinyl {
+      position: absolute;
+      right: -60px; top: 50%;
+      transform: translateY(-50%);
+      width: 560px; height: 560px;
+      z-index: 1;
+      animation: spin 18s linear infinite;
+    }
+    @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+    .vinyl-svg circle, .vinyl-svg ellipse { }
+
+    /* Waveform bar animation */
+    .waveform {
+      display: flex; align-items: center; gap: 3px;
+      margin-bottom: 32px;
+      position: relative; z-index: 2;
+    }
+    .waveform-bar {
+      width: 3px;
+      background: var(--green);
+      border-radius: 2px;
+      animation: wave 1.2s ease-in-out infinite;
+    }
+    .waveform-bar:nth-child(1)  { height: 12px; animation-delay: 0s; }
+    .waveform-bar:nth-child(2)  { height: 20px; animation-delay: 0.1s; }
+    .waveform-bar:nth-child(3)  { height: 28px; animation-delay: 0.2s; }
+    .waveform-bar:nth-child(4)  { height: 16px; animation-delay: 0.3s; }
+    .waveform-bar:nth-child(5)  { height: 32px; animation-delay: 0.15s; }
+    .waveform-bar:nth-child(6)  { height: 22px; animation-delay: 0.25s; }
+    .waveform-bar:nth-child(7)  { height: 14px; animation-delay: 0.05s; }
+    .waveform-bar:nth-child(8)  { height: 26px; animation-delay: 0.35s; }
+    .waveform-bar:nth-child(9)  { height: 18px; animation-delay: 0.45s; }
+    .waveform-bar:nth-child(10) { height: 30px; animation-delay: 0.2s; }
+    .waveform-bar:nth-child(11) { height: 10px; animation-delay: 0.4s; }
+    .waveform-bar:nth-child(12) { height: 24px; animation-delay: 0.1s; }
+
+    @keyframes wave {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(0.4); }
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 500;
+      margin-bottom: 16px;
+      position: relative; z-index: 2;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    .hero-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(64px, 10vw, 140px);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      color: var(--white);
+      position: relative; z-index: 2;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.35s forwards;
+    }
+    .hero-name .accent { color: var(--green); }
+
+    .hero-subtitle {
+      margin-top: 24px;
+      font-family: 'DM Serif Display', serif;
+      font-style: italic;
+      font-size: clamp(18px, 2.5vw, 26px);
+      color: var(--muted);
+      position: relative; z-index: 2;
+      max-width: 480px;
+      line-height: 1.4;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.5s forwards;
+    }
+
+    .hero-cta {
+      margin-top: 48px;
+      display: flex; gap: 16px; align-items: center;
+      position: relative; z-index: 2;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.65s forwards;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--green);
+      color: #000;
+      padding: 14px 32px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: none;
+    }
+    .btn-primary:hover { transform: scale(1.04); box-shadow: 0 0 30px rgba(29,185,84,0.4); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      transition: color 0.2s;
+      cursor: none;
+    }
+    .btn-secondary:hover { color: var(--white); }
+
+    .scroll-hint {
+      position: absolute; bottom: 32px; right: 48px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      z-index: 2;
+      opacity: 0;
+      animation: fadeIn 1s 1.2s forwards;
+    }
+    .scroll-line {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, var(--green), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+    .scroll-label {
+      font-size: 0.6rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted);
+      writing-mode: vertical-rl;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 48px;
+    }
+
+    /* ── SECTION ── */
+    section {
+      padding: 100px 48px;
+      position: relative; z-index: 1;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 500;
+      margin-bottom: 48px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-label::before {
+      content: '';
+      width: 32px; height: 1px;
+      background: var(--green);
+    }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .about-heading {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 1.15;
+      color: var(--white);
+    }
+    .about-heading em { color: var(--green); font-style: normal; }
+    .about-body {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--muted);
+      padding-top: 8px;
+    }
+    .about-body p + p { margin-top: 20px; }
+
+    /* ── STATS ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 80px;
+    }
+    .stat-card {
+      background: var(--surface);
+      padding: 40px 32px;
+      border: 1px solid var(--border);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .stat-card:hover {
+      background: var(--surface2);
+      border-color: rgba(29,185,84,0.25);
+    }
+    .stat-card:first-child { border-radius: 12px 0 0 12px; }
+    .stat-card:last-child  { border-radius: 0 12px 12px 0; }
+    .stat-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 5vw, 64px);
+      color: var(--white);
+      letter-spacing: 0.02em;
+      line-height: 1;
+    }
+    .stat-number span { color: var(--green); }
+    .stat-label {
+      margin-top: 8px;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── CONTACT ── */
+    .contact-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .contact-inner {
+      max-width: 760px;
+    }
+    .contact-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 7vw, 96px);
+      line-height: 0.95;
+      color: var(--white);
+      letter-spacing: 0.02em;
+    }
+    .contact-heading .green-word { color: var(--green); }
+
+    .contact-card {
+      margin-top: 56px;
+      display: inline-flex;
+      align-items: center;
+      gap: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 24px 32px;
+      border-radius: 16px;
+      transition: border-color 0.3s, transform 0.3s;
+      cursor: none;
+      text-decoration: none;
+    }
+    .contact-card:hover {
+      border-color: rgba(29,185,84,0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+    }
+    .contact-icon {
+      width: 48px; height: 48px;
+      background: rgba(29,185,84,0.1);
+      border: 1px solid rgba(29,185,84,0.2);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .contact-icon svg { width: 22px; height: 22px; fill: var(--green); }
+    .contact-info {}
+    .contact-type {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .contact-email {
+      font-size: 1.05rem;
+      color: var(--white);
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+    .contact-arrow {
+      margin-left: 16px;
+      color: var(--green);
+      font-size: 1.4rem;
+      transition: transform 0.25s;
+    }
+    .contact-card:hover .contact-arrow { transform: translate(4px, -4px); }
+
+    .contact-note {
+      margin-top: 32px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 480px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 40px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: relative; z-index: 1;
+    }
+    .footer-left {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+    .footer-right {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+    .footer-right .green-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+    /* ── SPOTIFY TAG ── */
+    .spotify-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-top: 40px;
+      background: rgba(29,185,84,0.08);
+      border: 1px solid rgba(29,185,84,0.2);
+      padding: 12px 20px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green);
+      position: relative; z-index: 2;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.8s forwards;
+    }
+    .spotify-icon { width: 18px; height: 18px; fill: var(--green); flex-shrink: 0; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 20px 24px; }
+      .hero { padding: 0 24px 64px; }
+      section { padding: 64px 24px; }
+      .divider { margin: 0 24px; }
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
+      .stats-row { grid-template-columns: 1fr; }
+      .stat-card { border-radius: 0 !important; }
+      .stat-card:first-child { border-radius: 12px 12px 0 0 !important; }
+      .stat-card:last-child  { border-radius: 0 0 12px 12px !important; }
+      .vinyl { width: 320px; height: 320px; right: -120px; opacity: 0.4; }
+      footer { flex-direction: column; gap: 16px; text-align: center; padding: 32px 24px; }
+      .scroll-hint { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Nav -->
+  <nav>
+    <a class="nav-logo" href="#">
+      <div class="dot"></div>
+      MBC
+    </a>
+    <div class="nav-pill">Spotify For Artists</div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg">
+      <!-- Vinyl SVG -->
+      <svg class="vinyl" viewBox="0 0 560 560" xmlns="http://www.w3.org/2000/svg">
+        <!-- Outer disc -->
+        <circle cx="280" cy="280" r="278" fill="#0f0f0f" stroke="#1a1a1a" stroke-width="2"/>
+        <!-- Grooves -->
+        <circle cx="280" cy="280" r="250" fill="none" stroke="#1c1c1c" stroke-width="1.5"/>
+        <circle cx="280" cy="280" r="235" fill="none" stroke="#1c1c1c" stroke-width="1.2"/>
+        <circle cx="280" cy="280" r="220" fill="none" stroke="#1c1c1c" stroke-width="1.2"/>
+        <circle cx="280" cy="280" r="205" fill="none" stroke="#1c1c1c" stroke-width="1"/>
+        <circle cx="280" cy="280" r="190" fill="none" stroke="#1c1c1c" stroke-width="1"/>
+        <circle cx="280" cy="280" r="175" fill="none" stroke="#1c1c1c" stroke-width="1"/>
+        <circle cx="280" cy="280" r="160" fill="none" stroke="#1c1c1c" stroke-width="0.8"/>
+        <circle cx="280" cy="280" r="145" fill="none" stroke="#1c1c1c" stroke-width="0.8"/>
+        <circle cx="280" cy="280" r="130" fill="none" stroke="#1c1c1c" stroke-width="0.8"/>
+        <!-- Label area -->
+        <circle cx="280" cy="280" r="110" fill="#111"/>
+        <circle cx="280" cy="280" r="108" fill="none" stroke="rgba(29,185,84,0.2)" stroke-width="1"/>
+        <!-- Label ring decoration -->
+        <circle cx="280" cy="280" r="95" fill="none" stroke="rgba(29,185,84,0.08)" stroke-width="8"/>
+        <!-- Label text arc area -->
+        <circle cx="280" cy="280" r="70" fill="#0d0d0d"/>
+        <!-- Green accent arc -->
+        <path d="M 280 210 A 70 70 0 0 1 350 280" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+        <!-- Spindle hole -->
+        <circle cx="280" cy="280" r="12" fill="#080808"/>
+        <circle cx="280" cy="280" r="4" fill="#1a1a1a"/>
+        <!-- Light reflection -->
+        <ellipse cx="200" cy="180" rx="60" ry="30" fill="rgba(255,255,255,0.02)" transform="rotate(-30 200 180)"/>
+      </svg>
+    </div>
+
+    <div class="hero-eyebrow">Sanatçı Profili</div>
+
+    <h1 class="hero-name">
+      MUSTAFA<br/>BORA<br/><span class="accent">CENGİZ</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      Müziği bir dil olarak kullanan, dinleyenlerin zihninde iz bırakan bir ses.
+    </p>
+
+    <div class="spotify-badge">
+      <svg class="spotify-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+      </svg>
+      Spotify For Artists — Resmi Başvuru
+    </div>
+
+    <div class="hero-cta">
+      <a href="mailto:mustafaboracengiz0@outlook.com" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        İletişime Geç
+      </a>
+      <a href="#about" class="btn-secondary">
+        Daha Fazla
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span class="scroll-label">Scroll</span>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Waveform Bar -->
+  <div style="padding: 32px 48px; position: relative; z-index:1; display:flex; align-items:center; gap: 24px;">
+    <div class="waveform">
+      <div class="waveform-bar"></div><div class="waveform-bar"></div>
+      <div class="waveform-bar"></div><div class="waveform-bar"></div>
+      <div class="waveform-bar"></div><div class="waveform-bar"></div>
+      <div class="waveform-bar"></div><div class="waveform-bar"></div>
+      <div class="waveform-bar"></div><div class="waveform-bar"></div>
+      <div class="waveform-bar"></div><div class="waveform-bar"></div>
+    </div>
+    <span style="font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted);">Now Playing</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- About -->
+  <section id="about">
+    <div class="section-label">Hakkında</div>
+    <div class="about-grid">
+      <div>
+        <h2 class="about-heading">
+          Müziğin<br/>kalbinden <em>gelen</em><br/>bir ses.
+        </h2>
+      </div>
+      <div class="about-body">
+        <p>
+          Mustafa Bora Cengiz, özgün müzikal kimliğiyle dinleyicilerinde derin izler bırakan bağımsız bir sanatçı. Her parçasında farklı bir duygu evrenine kapı aralayan bu ses, sadece nota ve ritimden ibaret değil.
+        </p>
+        <p>
+          Yaratıcı süreci boyunca otantikliği ön planda tutan Mustafa Bora, müziği bir iletişim aracı olarak benimsiyor; kelimelerle anlatılamayan her şeyi melodiye döküyor.
+        </p>
+        <p>
+          Spotify For Artists platformunda yeni bir başlangıç eşiğinde olan sanatçı, bu adımla dinleyicilerine daha geniş bir kanaldan ulaşmayı hedefliyor.
+        </p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-number">∞<span>+</span></div>
+        <div class="stat-label">Potansiyel Dinleyici</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number"><span>100</span>%</div>
+        <div class="stat-label">Özgün Müzik</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">1<span>st</span></div>
+        <div class="stat-label">Spotify Başvurusu</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Contact -->
+  <section class="contact-section" id="contact">
+    <div class="contact-inner">
+      <div class="section-label">İletişim</div>
+      <h2 class="contact-heading">
+        KONUŞALIM<br/><span class="green-word">MÜZİK</span><br/>YAPALIM
+      </h2>
+
+      <a href="mailto:mustafaboracengiz0@outlook.com" class="contact-card">
+        <div class="contact-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg>
+        </div>
+        <div class="contact-info">
+          <div class="contact-type">E-posta</div>
+          <div class="contact-email">mustafaboracengiz0@outlook.com</div>
+        </div>
+        <div class="contact-arrow">↗</div>
+      </a>
+
+      <p class="contact-note">
+        Spotify For Artists başvurusu ve diğer tüm işbirliği teklifleri için yukarıdaki adres üzerinden iletişime geçebilirsiniz. En kısa sürede dönüş yapılacaktır.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-left">Mustafa Bora Cengiz © 2025</div>
+    <div class="footer-right">
+      <div class="green-dot"></div>
+      Spotify For Artists Başvurusu
+    </div>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    // Hover effect on interactive elements
+    document.querySelectorAll('a, button, .stat-card').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        ring.style.width = '56px';
+        ring.style.height = '56px';
+        ring.style.borderColor = 'rgba(29,185,84,0.7)';
+      });
+      el.addEventListener('mouseleave', () => {
+        ring.style.width = '36px';
+        ring.style.height = '36px';
+        ring.style.borderColor = 'rgba(29,185,84,0.5)';
+      });
+    });
+
+    // Smooth reveal on scroll
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.stat-card, .about-heading, .about-body').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
